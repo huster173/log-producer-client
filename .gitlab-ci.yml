@@ -1,0 +1,17 @@
+stages:
+  - build
+build:       
+  stage: build
+  allow_failure: false
+  variables:
+        GIT_STRATEGY: clone
+        triggercommon: ""
+  after_script:
+    - triggercommon=${CI_JOB_STATUS}
+  tags:
+    - dev-tms-shell
+  script:
+    - pwd
+    - ls
+    - echo $tmp
+    - cp -Rf * /data/gitlab-runner/express-v2/$tmp/express-root || FAILED=true
