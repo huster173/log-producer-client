@@ -16,7 +16,7 @@ build:
     - pwd
     - ls
     - echo $tmp
-    - cp -Rf * /data_tms/gitlab-runner/express-v2/$tmp/express-root || FAILED=true
+    - cp -Rf * /data/gitlab-runner/express-v2/$tmp/express-root || FAILED=true
 
 sonar:
   stage: sonar
