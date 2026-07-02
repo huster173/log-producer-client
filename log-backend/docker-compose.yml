@@ -1,0 +1,76 @@
+services:
+
+  # ── Application ────────────────────────────────────────────────────────────
+  log-backend:
+    build: .
+    container_name: log-backend
+    ports:
+      - "8081:8081"
+    volumes:
+      # Share the log directory with Filebeat
+      - logs_data:/app/logs
+    networks:
+      - elk
+    depends_on:
+      - logstash
+
+  # ── ELK Stack ──────────────────────────────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.17.3
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5044:5044"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.3
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.17.3
+    container_name: filebeat
+    user: root
+    # --strict.perms=false: required on Windows/WSL where bind-mounted files have 777 permissions
+    command: filebeat -e --strict.perms=false
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - logs_data:/logs:ro
+    depends_on:
+      - logstash
+    networks:
+      - elk
+
+volumes:
+  es_data:
+  logs_data:
+
+networks:
+  elk:
+    driver: bridge

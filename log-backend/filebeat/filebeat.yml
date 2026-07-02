@@ -1,0 +1,17 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /logs/app*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    json.message_key: message
+
+output.logstash:
+  hosts: ["logstash:5044"]
+
+# Required on Windows/WSL where mounted files have 777 permissions
+filebeat.config.strict.perms: false
+
+# Disable internal filebeat logging noise
+logging.level: warning
