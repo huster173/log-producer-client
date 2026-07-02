@@ -11,4 +11,7 @@ public class ConsumerProperties {
     private int consumerThreads = 4;
     private int maxRetries      = 3;
     private long initialBackoffMs = 100;
+
+    /** Max entries accepted per POST /api/logs request; larger requests are rejected with 413. */
+    private int maxBatchSize = 5_000;
 }

@@ -8,12 +8,14 @@
         </encoder>
     </appender>
 
-    <!-- Rolling JSON file appender — Filebeat reads this -->
+    <!-- Rolling JSON file appender — Filebeat reads this. LOG_FILE lets each
+         horizontally-scaled replica write to its own file so they don't collide
+         on the shared logs volume. -->
     <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/app.log</file>
+        <file>logs/${LOG_FILE:-app}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Roll over daily, keep 7 days -->
-            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/${LOG_FILE:-app}.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">

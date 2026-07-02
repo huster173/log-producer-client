@@ -1,11 +1,28 @@
 services:
 
-  # ── Application ────────────────────────────────────────────────────────────
-  log-backend:
-    build: .
-    container_name: log-backend
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=logdb
+      - POSTGRES_USER=loguser
+      - POSTGRES_PASSWORD=logpass
     ports:
-      - "8081:8081"
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - elk
+
+  # ── Application (3 stateless replicas behind an LB) ─────────────────────────
+  log-backend-1: &log-backend
+    build: .
+    container_name: log-backend-1
+    environment:
+      - LOG_FILE=app-1
+      - DB_HOST=postgres
+    expose:
+      - "8081"
     volumes:
       # Share the log directory with Filebeat
       - logs_data:/app/logs
@@ -13,6 +30,35 @@ services:
       - elk
     depends_on:
       - logstash
+      - postgres
+
+  log-backend-2:
+    <<: *log-backend
+    container_name: log-backend-2
+    environment:
+      - LOG_FILE=app-2
+      - DB_HOST=postgres
+
+  log-backend-3:
+    <<: *log-backend
+    container_name: log-backend-3
+    environment:
+      - LOG_FILE=app-3
+      - DB_HOST=postgres
+
+  log-backend-lb:
+    image: nginx:1.27-alpine
+    container_name: log-backend-lb
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - log-backend-1
+      - log-backend-2
+      - log-backend-3
+    networks:
+      - elk
 
   # ── ELK Stack ──────────────────────────────────────────────────────────────
   elasticsearch:
@@ -70,6 +116,7 @@ services:
 volumes:
   es_data:
   logs_data:
+  pg_data:
 
 networks:
   elk:
