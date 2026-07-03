@@ -118,7 +118,6 @@ Các log dạng JSON (`type=metrics`) cũng được gửi qua **Filebeat → Lo
 | **Nginx edge** | Rate limit 600 request/s mỗi IP, burst 200 | `429` |
 | **Controller** | Từ chối batch > 5.000 log | `413` |
 | **Queue** | `offer()` trả `false` khi đầy | `503` |
-| **Thread pool** | Consumer chạy tách biệt khỏi HTTP thread | Lỗi DB không ảnh hưởng luồng nhận log |
 
 ---
 
