@@ -5,6 +5,7 @@ Hệ thống Java xử lý hàng chục triệu log/ngày: **producer → nginx 
 ---
 
 ## Kiến trúc
+![Uploading image.png…]()
 
 ```
 Producer (1.000 log/s)
@@ -136,6 +137,10 @@ open http://localhost:5601
 ---
 
 ## Giám sát RAM / CPU
+<img width="261" height="157" alt="image" src="https://github.com/user-attachments/assets/f60de744-8a3d-4bc0-95b8-89a5d502c287" />
+<img width="255" height="159" alt="image" src="https://github.com/user-attachments/assets/71aa2905-60e0-47cf-a925-77ec0832fb04" />
+<img width="252" height="152" alt="image" src="https://github.com/user-attachments/assets/f64975f0-a682-42ab-818f-411fdee431fa" />
+<img width="259" height="159" alt="image" src="https://github.com/user-attachments/assets/574121a4-bde5-44c8-9a93-bc5ffd3fb53d" />
 
 ```bash
 # Live stats containers
