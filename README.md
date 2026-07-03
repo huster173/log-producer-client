@@ -5,7 +5,8 @@ Hệ thống Java xử lý hàng chục triệu log/ngày: **producer → nginx 
 ---
 
 ## Kiến trúc
-![Uploading image.png…]()
+<img width="646" height="963" alt="image" src="https://github.com/user-attachments/assets/5cfd45b4-0f8b-44aa-8aee-bb43b3f75b2f" />
+
 
 ```
 Producer (1.000 log/s)
